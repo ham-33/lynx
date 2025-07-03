@@ -1,0 +1,11 @@
+sql:
+  host: "localhost"
+  port: 3306
+  database: "lynx_main"
+  username: "lynx"
+  password: "strongpass"
+  pool:
+    maximumPoolSize: 20
+    minimumIdle: 4
+    connectionTimeout: 30000
+    leakDetectionThreshold: 15000
