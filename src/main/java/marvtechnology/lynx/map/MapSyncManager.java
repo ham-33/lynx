@@ -59,5 +59,10 @@ public class MapSyncManager {
             icon.markerOptions(MarkerOptions.builder().strokeColor(c).build());
             layer.addMarker(Key.of(country.getId().toString() + "-cap"), icon);
         }
+
+public class MapSyncManager {
+    public void sync() {
+        // Placeholder for Squaremap sync
+
     }
 }

@@ -2,7 +2,10 @@ package marvtechnology.lynx.country;
 
 import org.bukkit.entity.Player;
 
+
 import marvtechnology.lynx.map.ColorUtil;
+
+
 
 import java.util.*;
 
@@ -15,6 +18,11 @@ public class CountryManager {
         Country country = new Country(UUID.randomUUID(), name, new Capital(founder.getLocation()), colorHex);
         countries.put(country.getId(), country);
         return country;
+
+    public void createCountry(Player founder, String name) {
+        Country country = new Country(UUID.randomUUID(), name);
+        countries.put(country.getId(), country);
+
     }
 
     public Collection<String> listCountries() {
@@ -24,6 +32,7 @@ public class CountryManager {
         }
         return names;
     }
+
 
     public Collection<Country> getCountries() {
         return countries.values();
