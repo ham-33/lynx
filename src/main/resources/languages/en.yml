@@ -1,0 +1,158 @@
+# =========================================================
+#  Lynx – English language pack (full spec v1.0)
+#  Placeholders: {currency}, {amount}, {country}, {player}, …
+#  Colour tags: <red> <green> <gold> <gray> <yellow> <aqua> …
+# =========================================================
+
+prefix: "<gray>[<gold>Lynx</gold>]</gray> "
+
+# ─────────────────── Generic ───────────────────
+generic:
+  no-permission:        "<prefix><red>You don’t have permission to do that.</red>"
+  player-only:          "<prefix><red>This command can only be run by a player.</red>"
+  console-only:         "<prefix><red>This command can only be run from console.</red>"
+  unknown-sub:          "<prefix><red>Unknown sub-command. Use <gold>/{base_cmd} help</gold>.</red>"
+  unknown-arg:          "<prefix><red>Unknown argument: {arg}</red>"
+  invalid-number:       "<prefix><red>{value} is not a valid number.</red>"
+  not-found:            "<prefix><red>{target} could not be found.</red>"
+  action-cancelled:     "<prefix><yellow>Action cancelled.</yellow>"
+  success:              "<prefix><green>Done!</green>"
+  error:                "<prefix><red>An error occurred. Check console.</red>"
+
+# ─────────────────── Economy / Vault ─────────────────
+economy:
+  insufficient-funds:   "<prefix><red>You need <gold>{needed} {currency}</gold>, but have <gold>{balance}</gold>.</red>"
+  balance-format:       "<gold>{balance} {currency}</gold>"
+  reward-received:      "<prefix><green>You received <gold>{amount} {currency}</gold>.</green>"
+  deposit-success:      "<prefix><green>Deposited <gold>{amount} {currency}</gold> to {target}.</green>"
+  withdraw-success:     "<prefix><green>Withdrew <gold>{amount} {currency}</gold> from {target}.</green>"
+  treasury-balance:     "<prefix><aqua>Treasury balance: <gold>{balance} {currency}</gold>.</aqua>"
+  upkeep-paid:          "<prefix><green>Upkeep of <gold>{amount} {currency}</gold> paid.</green>"
+  upkeep-overdue:       "<prefix><yellow>Upkeep overdue! Pay <gold>{amount} {currency}</gold> within {days} day(s).</yellow>"
+  upkeep-disband-warning:"<prefix><red>FINAL WARNING: pay upkeep or the country will disband tomorrow.</red>"
+  upkeep-disbanded:     "<prefix><red>Country disbanded due to unpaid upkeep.</red>"
+
+# ─────────────────── Country ─────────────────
+country:
+  created:              "<prefix><green>Country <gold>{country}</gold> successfully founded!</green>"
+  disbanded:            "<prefix><red>Country <gold>{country}</gold> has been disbanded.</red>"
+  deleted:              "<prefix><red>Country <gold>{country}</gold> deleted by an administrator.</red>"
+  restored:             "<prefix><green>Country <gold>{country}</gold> has been restored.</green>"
+  transferred-out:      "<prefix><yellow>You transferred leadership to <gold>{player}</gold>.</yellow>"
+  transferred-in:       "<prefix><green>You are now the leader of <gold>{country}</gold>!</green>"
+  invited:              "<prefix><green>You invited <gold>{player}</gold> to join the country.</green>"
+  invite-received:      "<prefix><green><gold>{player}</gold> invited you to join <gold>{country}</gold>. Type <yellow>/accept</yellow> to join.</green>"
+  invite-expired:       "<prefix><red>Invitation expired.</red>"
+  joined:               "<prefix><green><gold>{player}</gold> joined the country.</green>"
+  left:                 "<prefix><yellow><gold>{player}</gold> left the country.</yellow>"
+  kicked:               "<prefix><red><gold>{player}</gold> was removed from the country.</red>"
+  rank-set:             "<prefix><green><gold>{player}</gold> is now <gold>{rank}</gold>.</green>"
+  rank-removed:         "<prefix><yellow>{player}’s rank has been cleared.</yellow>"
+  capital-set:          "<prefix><green>Capital set to <gold>X:{x} Z:{z}</gold>.</green>"
+  party-set:            "<prefix><green>Political party changed to <gold>{party}</gold>.</green>"
+  ideology-set:         "<prefix><green>Ideology changed to <gold>{ideology}</gold>.</green>"
+  color-set:            "<prefix><green>Country colour changed to <gold>{color}</gold>.</green>"
+  claim-added:          "<prefix><green>Chunk claimed.</green>"
+  claim-removed:        "<prefix><yellow>Chunk unclaimed.</yellow>"
+  bank-balance:         "<prefix><aqua>Country balance: <gold>{balance} {currency}</gold>.</aqua>"
+
+  # Info / list formatting
+  list-header:          "<prefix><gray>───── Countries ({count}) ─────</gray>"
+  list-entry:           "<gray>- <gold>{country}</gold> (<yellow>{members}</yellow> members)</gray>"
+  info-header:          "<prefix><gray>───── {country} ─────</gray>"
+  info-line:            "<gray>{key}: <gold>{value}</gold></gray>"
+
+  # Diplomacy / war
+  diplomacy-request-sent:     "<prefix><green>Diplomacy request sent to <gold>{target}</gold>.</green>"
+  diplomacy-request-received: "<prefix><yellow>Diplomacy request from <gold>{country}</gold>. /accept or /deny.</yellow>"
+  alliance-formed:            "<prefix><green>Alliance formed with <gold>{country}</gold>.</green>"
+  war-declared:               "<prefix><red>You declared war on <gold>{country}</gold>!</red>"
+  war-ended:                  "<prefix><green>War ended with <gold>{country}</gold>.</green>"
+  war-cooldown:               "<prefix><yellow>You must wait {days} day(s) before declaring war again.</yellow>"
+
+# ─────────────────── Faction ─────────────────
+faction:
+  created:              "<prefix><green>Faction <gold>{faction}</gold> created.</green>"
+  deleted:              "<prefix><red>Faction <gold>{faction}</gold> deleted.</red>"
+  restored:             "<prefix><green>Faction <gold>{faction}</gold> restored.</green>"
+  joined:               "<prefix><green>Your country joined <gold>{faction}</gold>.</green>"
+  left:                 "<prefix><yellow>Your country left <gold>{faction}</gold>.</yellow>"
+  invite-sent:          "<prefix><green>Invitation sent to <gold>{country}</gold>.</green>"
+  invite-received:      "<prefix><green><gold>{faction}</gold> invited your country. /accept or /deny.</green>"
+  alliance-formed:      "<prefix><green>{faction1} and {faction2} are now allies.</green>"
+  alliance-ended:       "<prefix><yellow>Alliance with {faction} ended.</yellow>"
+
+# ─────────────────── Bank ─────────────────
+bank:
+  deposit-usage:        "<prefix><yellow>Usage:</yellow> /country bank deposit <amount>"
+  withdraw-usage:       "<prefix><yellow>Usage:</yellow> /country bank withdraw <amount>"
+  deposit-ok:           "<prefix><green>Deposited <gold>{amount} {currency}</gold> into the treasury.</green>"
+  withdraw-ok:          "<prefix><green>Withdrew <gold>{amount} {currency}</gold> from the treasury.</green>"
+  insufficient-treasury:"<prefix><red>Treasury lacks <gold>{amount} {currency}</gold>.</red>"
+  treasury-set:         "<prefix><green>Treasury balance set to <gold>{amount} {currency}</gold>.</green>"
+  treasury-add:         "<prefix><green>Added <gold>{amount} {currency}</gold> to treasury.</green>"
+  treasury-remove:      "<prefix><yellow>Removed <gold>{amount} {currency}</gold> from treasury.</yellow>"
+
+# ─────────────────── Request / Confirmation ─────────────────
+request:
+  sent:                 "<prefix><green>Request sent. Waiting for confirmation.</green>"
+  accepted:             "<prefix><green>Request <gold>{id}</gold> accepted.</green>"
+  denied:               "<prefix><red>Request <gold>{id}</gold> denied.</red>"
+  cancelled:            "<prefix><yellow>Request <gold>{id}</gold> cancelled.</yellow>"
+  timeout:              "<prefix><red>Request <gold>{id}</gold> timed out.</red>"
+  none:                 "<prefix><yellow>No pending requests.</yellow>"
+
+# ─────────────────── Admin / OP ─────────────────
+admin:
+  country-force-delete: "<prefix><red>Country <gold>{country}</gold> forcibly deleted.</red>"
+  country-restore:      "<prefix><green>Country <gold>{country}</gold> has been restored.</green>"
+  faction-force-delete: "<prefix><red>Faction <gold>{faction}</gold> forcibly deleted.</red>"
+  faction-restore:      "<prefix><green>Faction <gold>{faction}</gold> has been restored.</green>"
+  force-transfer:       "<prefix><yellow>Leadership forcibly transferred to {player}.</yellow>"
+  force-leave:          "<prefix><yellow>{player} forcibly removed from {country}.</yellow>"
+  data-synced:          "<prefix><green>Data synchronised.</green>"
+  backup-started:       "<prefix><green>Manual backup started…</green>"
+  backup-finished:      "<prefix><green>Manual backup finished in <gold>{seconds}s</gold>.</green>"
+  restore-started:      "<prefix><yellow>Restoring {country}…</yellow>"
+  restore-finished:     "<prefix><green>{country} restored from backup.</green>"
+
+# ─────────────────── Help ─────────────────
+help:
+  header:  "<prefix><aqua>—— Lynx Help: /{base_cmd} ——</aqua>"
+  footer:  "<prefix><aqua>———————————</aqua>"
+  entry:   "<gray>/<white>{cmd}</white> <yellow>{args}</yellow><gray> » {desc}</gray>"
+  page:    "<prefix><gray>Page <gold>{page}/{pages}</gold></gray>"
+  command: "<gold>{cmd}</gold>"
+  description: "<gray>{desc}</gray>"
+
+# ─────────────────── Squaremap / Map Sync ─────────────────
+map:
+  synced:      "<prefix><green>Squaremap successfully updated.</green>"
+  sync-failed: "<prefix><red>Squaremap update failed. Check console.</red>"
+  auto-sync-start:"<prefix><gray>Auto map sync started…</gray>"
+  auto-sync-end:  "<prefix><green>Auto map sync finished.</green>"
+
+# ─────────────────── Backup / Restore ─────────────────
+backup:
+  started:     "<prefix><gray>Backup started…</gray>"
+  finished:    "<prefix><green>Backup completed in <gold>{seconds}s</gold>.</green>"
+  restored:    "<prefix><green>Country <gold>{country}</gold> has been restored.</green>"
+  failed:      "<prefix><red>Backup failed. See console.</red>"
+  expired-deleted:"<prefix><gray>Old backup <gold>{file}</gold> deleted.</gray>"
+
+# ─────────────────── Upkeep Notices ─────────────────
+upkeep:
+  overdue-warning: "<prefix><yellow>Upkeep unpaid! {days} day(s) left.</yellow>"
+  disband-warning: "<prefix><red>Upkeep deadline reached. Country will disband tomorrow.</red>"
+  disbanded:       "<prefix><red>Country disbanded due to unpaid upkeep.</red>"
+
+# ─────────────────── Web API / Dashboard ─────────────────
+webapi:
+  enabled:  "<prefix><green>Web API enabled on port {port}.</green>"
+  disabled: "<prefix><yellow>Web API disabled.</yellow>"
+  auth-failed:"<prefix><red>Authentication failed.</red>"
+
+# ─────────────────── Scheduler / Tasks ─────────────────
+scheduler:
+  task-start: "<prefix><gray>{task} started.</gray>"
+  task-end:   "<prefix><gray>{task} finished in {ms} ms.</gray>"

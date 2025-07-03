@@ -1,0 +1,37 @@
+language: "auto"          # auto=プレイヤーLocale
+currency:
+  mode: "auto"            # Vault 自動
+  manual_name: "coin"
+
+creation:
+  country_cost: 1000
+  faction_cost: 5000
+upkeep:
+  enabled: true
+  daily_cost_per_plot: 10
+  collection_hour: 4
+  grace_days: 2           # 未払い猶予日
+joining:
+  allow_free_join: false
+  require_accept: true
+
+limits:
+  max_members_per_country: 150
+  max_countries: 1000
+  max_claims_per_country: 2000
+
+map:
+  enable_map_sync: true
+  color_mode: "random"
+  marker_icon: "default_star"
+  marker_layer_name: "Lynx Nations"
+  auto_sync_interval: 1800   # 秒
+
+backup:
+  keep_days: 14
+  output_directory: "plugins/lynx/backup/countries"
+
+webapi:
+  enabled: true
+  port: 8650
+  jwt_secret: "CHANGE_ME"

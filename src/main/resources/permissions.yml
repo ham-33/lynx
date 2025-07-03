@@ -1,0 +1,7 @@
+rank1:
+  - lynx.country.*
+  - lynx.bank.withdraw
+rank2:
+  - lynx.country.invite
+  - lynx.country.kick
+rank3: []
