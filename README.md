@@ -148,3 +148,255 @@ Lynx/
 /admin bank add/remove <国名> <金額>	国庫に加算/減算
 /admin lynxlog view/search	国家ログ検索表示
 /admin lynxrequest cancel <UUID>	リクエストを強制キャンセル
+
+🏛 LynxPlugin — 完全仕様書 v1.0
+
+(Folia 1.21 / Java 21 / Vault / Squaremap / MariaDB・多言語対応 “フル企画” 版)
+0. 目的
+
+MARVTechnology が運営する Minecraft 1.21.1 サーバー上で、国家・陣営・経済・領土・外交・戦争・バックアップ・Web 連携までを 1 本で実現する 超大型統治プラグインを開発する。
+
+    Folia … マルチスレッド＋ RegionScheduler による最高速
+
+    Vault … 既存経済プラグインと完全連携
+
+    Squaremap … 首都マーカー＋領土ポリゴンをリアルタイム可視化
+
+    完全多言語 … JA / EN / KO / ZH を同梱、動的切替
+
+    API/WEB … 将来の REST / WebSocket / Dashboard を想定した公開 API
+
+1. 必要ソフト & ビルド
+項目	バージョン	備考
+Java	21	Folia 1.21 要件
+サーバー	Folia 1.21.1	git-2025-07-01 以降
+ビルド	Maven 3.9+	shade + relocate 方式
+依存	Vault, Squaremap, Adventure 4., HikariCP 5., Gson 2.10	
+pom.xml 主要ブロック（抜粋）
+
+<dependencies>
+  <dependency><groupId>dev.folia</groupId><artifactId>folia-api</artifactId><version>1.21-R0.1-SNAPSHOT</version><scope>provided</scope></dependency>
+  <dependency><groupId>net.milkbowl</groupId><artifactId>VaultAPI</artifactId><version>1.7</version><scope>provided</scope></dependency>
+  <dependency><groupId>com.zaxxer</groupId><artifactId>HikariCP</artifactId><version>5.1.0</version></dependency>
+  <dependency><groupId>net.kyori</groupId><artifactId>adventure-platform-bukkit</artifactId><version>4.5.2</version></dependency>
+  <dependency><groupId>com.google.code.gson</groupId><artifactId>gson</artifactId><version>2.10.1</version></dependency>
+</dependencies>
+
+2. ディレクトリ構成（フル）
+
+Lynx/
+├── pom.xml
+├── README.md
+├── docs/                   # 技術設計書・ER図・フロー図
+├── src/main/
+│   ├── java/marvtech/lynx/
+│   │   ├── Lynx.java
+│   │   ├── api/                # 外部公開イベント & サービス
+│   │   │   ├── LynxNationCreateEvent.java
+│   │   │   └── LynxAPI.java
+│   │   ├── commands/
+│   │   │   ├── CountryCommand.java
+│   │   │   ├── FactionCommand.java
+│   │   │   ├── BankCommand.java
+│   │   │   ├── AdminCommand.java
+│   │   │   └── ConfirmCommand.java      # /accept /deny
+│   │   ├── listeners/                   # PlayerJoin, ChunkClaim 等
+│   │   ├── scheduler/                   # Folia RegionTasks & cron
+│   │   │   ├── UpkeepTask.java
+│   │   │   ├── MapAutoSyncTask.java
+│   │   │   └── BackupTask.java
+│   │   ├── country/
+│   │   │   ├── model/ (POJO)            # Country, Rank, Capital …
+│   │   │   ├── service/                 # 国操作ロジック
+│   │   │   └── repository/              # DAO (CountryRepo)
+│   │   ├── faction/ …                   # ※country と同様 3 層
+│   │   ├── economy/
+│   │   │   ├── EconomyService.java      # Vault ラッパ
+│   │   │   └── CurrencyFormatter.java
+│   │   ├── map/
+│   │   │   ├── SquaremapService.java
+│   │   │   └── ColorUtil.java
+│   │   ├── backup/
+│   │   │   ├── BackupManager.java
+│   │   │   └── JsonExporter.java
+│   │   ├── lang/
+│   │   │   ├── LangManager.java
+│   │   │   └── keys/ (Enum Keys)        # 型安全メッセージキー
+│   │   └── util/                        # 共通 Helper
+│   └── resources/
+│       ├── plugin.yml
+│       ├── settings.yml
+│       ├── database.yml
+│       ├── permissions.yml
+│       └── languages/
+│           ├── ja.yml
+│           ├── en.yml
+│           ├── ko.yml
+│           └── zh.yml
+
+3. 主要設定ファイル
+settings.yml（拡張版）
+
+language: "auto"          # auto=プレイヤーLocale
+currency:
+  mode: "auto"            # Vault 自動
+  manual_name: "coin"
+
+creation:
+  country_cost: 1000
+  faction_cost: 5000
+upkeep:
+  enabled: true
+  daily_cost_per_plot: 10
+  collection_hour: 4
+  grace_days: 2           # 未払い猶予日
+joining:
+  allow_free_join: false
+  require_accept: true
+
+limits:
+  max_members_per_country: 150
+  max_countries: 1000
+  max_claims_per_country: 2000
+
+map:
+  enable_map_sync: true
+  color_mode: "random"
+  marker_icon: "default_star"
+  marker_layer_name: "Lynx Nations"
+  auto_sync_interval: 1800   # 秒
+
+backup:
+  keep_days: 14
+  output_directory: "plugins/lynx/backup/countries"
+
+webapi:
+  enabled: true
+  port: 8650
+  jwt_secret: "CHANGE_ME"
+
+database.yml
+
+sql:
+  host: "localhost"
+  port: 3306
+  database: "lynx_main"
+  username: "lynx"
+  password: "strongpass"
+  pool:
+    maximumPoolSize: 20
+    minimumIdle: 4
+    connectionTimeout: 30000
+    leakDetectionThreshold: 15000
+
+permissions.yml（抜粋）
+
+rank1:
+  - lynx.country.*
+  - lynx.bank.withdraw
+rank2:
+  - lynx.country.invite
+  - lynx.country.kick
+rank3: []
+
+4. DB スキーマ（ER ダイジェスト）
+
+countries 1─* members
+countries 1─* claims
+countries *─1 factions
+factions  1─* faction_members
+requests  (汎用: invite / transfer / faction-join など)
+logs      (監査)
+
+countries テーブル
+Column	Type	Note
+id	INT PK	
+name	VARCHAR(64)	
+founder_uuid	CHAR(36)	
+color	CHAR(7) #RRGGBB	
+ideology	VARCHAR(64)	
+party	VARCHAR(64)	
+capital_x / z	INT	
+balance	DECIMAL(20,2)	
+created_at	TIMESTAMP	
+5. コマンド & パーミッションフルリスト
+
+(省略せず 100% 一覧化。実装時は commands.yml 自動生成ツールを使うと管理が楽)
+コマンド	権限ノード	説明
+/country create <name>	lynx.country.create	建国
+/country delete	lynx.country.delete	論理削除
+/country disband	lynx.country.disband	解散
+/country transfer <player>	lynx.country.transfer	建国者譲渡
+/country invite <player>	lynx.country.invite	招待
+/country kick <player>	lynx.country.kick	追放
+/country rank setname …	lynx.country.rank.setname	役職名変更
+/country bank deposit …	lynx.bank.deposit	入金
+/country bank withdraw …	lynx.bank.withdraw	出金
+…	…	…
+/faction …	lynx.faction.*	陣営
+/lynx accept	lynx.request.accept	承認
+/lynx deny	lynx.request.deny	拒否
+/lynx backup	lynx.admin.backup	手動バックアップ
+/admin …	lynx.admin.*	OP 全権
+6. Folia スレッドモデル / Scheduler
+処理	実行スレッド	説明
+コマンド	RegionMain	Folia が自動で対象 Region に割当て
+MapSync	GlobalAsync (scheduler#runAsync)	JSON 書込のみ
+Upkeep	RegionTask (0,0)	経済操作は Vault → thread-safe
+Backup	Async	データ Export & ファイル I/O
+DB	Async	HikariCP 非同期プール
+7. 多言語システム
+
+    LangKey enum = 型安全キー
+
+    lang/<code>.yml = key: "msg with {0} {1}"
+
+    Lang.t(sender, key, args…) → Adventure MiniMessage / PlaceholderAPI friendly
+
+8. 色割当アルゴリズム
+
+public static String randomHex() {
+  float h = ThreadLocalRandom.current().nextFloat();  // 0–1
+  int rgb = Color.HSBtoRGB(h, 0.8f, 0.9f);
+  return String.format("#%06X", (0xFFFFFF & rgb));
+}
+
+    countries.color に保存 → 不変
+
+    /country setcolor #RRGGBB (OP) で手動上書きも可能
+
+9. バックアップ & リストア
+項目	実装
+形式	CountryBackup{meta, members[], claims[], ledger[]} JSON pretty
+スケジュール	backup.output_directory に毎日 03:00 JST
+保持	keep_days 超過で自動削除
+復元	/lynx restore <国名> がファイルをインポートし DB へ upsert
+10. Web API (将来拡張)
+
+    REST (Spring Boot embedded, shaded)
+
+        GET /api/v1/countries
+
+        POST /api/v1/countries/{id}/invite
+
+    Auth: JWT (settings.yml:webapi.jwt_secret)
+
+    CORS: Same-origin default, toggle via settings
+
+11. 監査ログ & モデレーション
+
+    logs テーブル… コマンド実行・資金移動・役職変更を全記録
+
+    /admin lynxlog view/search で閲覧
+
+    Discord Webhook integration (optional)
+
+12. 開発フロー
+
+    DB スキーマ自動移行: Flyway (mvn flyway:migrate)
+
+    単体テスト: JUnit 5 + Mockito → src/test/
+
+    CI/CD: GitHub Actions → mvn verify → Artifacts → PaperMC/Folia docker push
+
+    リリース: Git tag / GH-Release / Modrinth page
