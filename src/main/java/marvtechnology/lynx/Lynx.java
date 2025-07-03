@@ -9,6 +9,11 @@ import marvtechnology.lynx.country.CountryManager;
 import marvtechnology.lynx.faction.FactionManager;
 import marvtechnology.lynx.bank.BankManager;
 import marvtechnology.lynx.map.MapSyncManager;
+import marvtechnology.lynx.api.LynxAPI;
+import marvtechnology.lynx.economy.EconomyService;
+import marvtechnology.lynx.scheduler.BackupTask;
+import marvtechnology.lynx.scheduler.MapAutoSyncTask;
+import marvtechnology.lynx.scheduler.UpkeepTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lynx extends JavaPlugin {
@@ -17,6 +22,8 @@ public class Lynx extends JavaPlugin {
     private FactionManager factionManager;
     private BankManager bankManager;
     private MapSyncManager mapSyncManager;
+    private EconomyService economyService;
+    private LynxAPI api;
 
     @Override
     public void onEnable() {
@@ -26,6 +33,13 @@ public class Lynx extends JavaPlugin {
         factionManager = new FactionManager();
         bankManager = new BankManager();
         mapSyncManager = new MapSyncManager(countryManager);
+        economyService = new EconomyService();
+        economyService.setup();
+        api = new LynxAPI(countryManager);
+
+        new UpkeepTask(countryManager).runTaskTimer(this, 20L * 60 * 60, 20L * 60 * 60);
+        new MapAutoSyncTask(mapSyncManager).runTaskTimer(this, 20L * 60, 20L * 60);
+        new BackupTask(new marvtechnology.lynx.backup.BackupManager()).runTaskTimer(this, 20L * 60 * 60 * 6, 20L * 60 * 60 * 6);
 
         getCommand("country").setExecutor(new CountryCommand(countryManager));
         getCommand("faction").setExecutor(new FactionCommand(factionManager));
@@ -43,5 +57,9 @@ public class Lynx extends JavaPlugin {
 
     public static Lynx getInstance() {
         return instance;
+    }
+
+    public LynxAPI getApi() {
+        return api;
     }
 }
