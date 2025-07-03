@@ -9,3 +9,7 @@ commands:
     description: Faction commands
   lynx:
     description: General lynx command
+  admin:
+    description: Admin commands
+  countrybank:
+    description: Bank commands
